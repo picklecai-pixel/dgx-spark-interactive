@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#05090a" />
+  <meta name="description" content="NVIDIA DGX Spark 交互式产品档案：以实时 3D 模型探索 GB10 Grace Blackwell 超级芯片、统一内存、后置接口与热力结构。" />
+  <title>DGX SPARK · 交互式硬件档案</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23060b0a'/%3E%3Cpath d='M16 5l11 11-11 11L5 16Z' fill='none' stroke='%23b6f24a' stroke-width='1.5'/%3E%3Cpath d='M16 11l5 5-5 5-5-5Z' fill='%23b6f24a'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-chip" viewBox="0 0 24 24">
+      <rect x="7" y="7" width="10" height="10" rx="2.2"/>
+      <rect x="10" y="10" width="4" height="4" rx=".8"/>
+      <path d="M9 2.8v3.4M12 2.8v3.4M15 2.8v3.4M9 17.8v3.4M12 17.8v3.4M15 17.8v3.4M2.8 9h3.4M2.8 12h3.4M2.8 15h3.4M17.8 9h3.4M17.8 12h3.4M17.8 15h3.4"/>
+    </symbol>
+    <symbol id="i-memory" viewBox="0 0 24 24">
+      <rect x="3" y="6.5" width="18" height="11" rx="2"/>
+      <path d="M7 6.5v11M11 6.5v11M15 6.5v11M19 6.5v11M5.5 9h2M9.5 9h2M13.5 9h2M17.5 9h2"/>
+      <path d="M6 17.5v2.5M12 17.5v2.5M18 17.5v2.5"/>
+    </symbol>
+    <symbol id="i-network" viewBox="0 0 24 24">
+      <circle cx="5.5" cy="12" r="2.1"/><circle cx="18.5" cy="6.2" r="2.1"/><circle cx="18.5" cy="17.8" r="2.1"/>
+      <path d="M7.5 11.2 16.5 7M7.5 12.8l9 4.2M12 12h.01"/>
+    </symbol>
+    <symbol id="i-storage" viewBox="0 0 24 24">
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/>
+      <path d="M3.5 9.5h17M8 14.5h.01M11 14.5h3.4"/><circle cx="17.4" cy="16.5" r="1.3"/>
+    </symbol>
+    <symbol id="i-cooling" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.2"/>
+      <path d="M12 9.8c.2-3.1-.7-5.1.3-6.1 1.2-1.1 3 1 2.6 2.9-.3 1.5-1.7 2.4-2.9 3.2M14.2 12c3.1.2 5.1-.7 6.1.3 1.1 1.2-1 3-2.9 2.6-1.5-.3-2.4-1.7-3.2-2.9M12 14.2c-.2 3.1.7 5.1-.3 6.1-1.2 1.1-3-1-2.6-2.9.3-1.5 1.7-2.4 2.9-3.2M9.8 12c-3.1-.2-5.1.7-6.1-.3-1.1-1.2 1-3 2.9-2.6 1.5.3 2.4 1.7 3.2 2.9"/>
+    </symbol>
+    <symbol id="i-io" viewBox="0 0 24 24">
+      <rect x="3.5" y="7" width="17" height="10" rx="2.2"/>
+      <path d="M7 10h4M7 14h7M16.5 10v4M14.5 12h4"/>
+    </symbol>
+    <symbol id="i-os" viewBox="0 0 24 24">
+      <rect x="3" y="4.5" width="18" height="15" rx="2.5"/>
+      <path d="M3 8.5h18M7 12l2.5 2L7 16M11.5 16h4.5"/>
+    </symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24">
+      <path d="M3.5 9.2a13 13 0 0 1 17 0M6.5 12.6a8.4 8.4 0 0 1 11 0M9.5 16a4.1 4.1 0 0 1 5 0"/>
+      <circle cx="12" cy="19.2" r="1.2" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24">
+      <path d="M4.5 9.5A8 8 0 1 1 4 14M4.5 4.5v5h5"/>
+    </symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24">
+      <path d="M8.5 3.5h-5v5M15.5 3.5h5v5M8.5 20.5h-5v-5M15.5 20.5h5v-5"/>
+    </symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24">
+      <path d="M3.5 8.5h5v-5M20.5 8.5h-5v-5M3.5 15.5h5v5M20.5 15.5h-5v5"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M4.5 12h15M14 6.5l5.5 5.5L14 17.5"/>
+    </symbol>
+    <symbol id="i-cube" viewBox="0 0 24 24">
+      <path d="m12 2.8 8 4.6v9.2l-8 4.6-8-4.6V7.4Z"/><path d="m4 7.4 8 4.6 8-4.6M12 12v9.2"/>
+    </symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24">
+      <path d="m12 3 9 4.5-9 4.5-9-4.5Z"/><path d="m3.5 11.5 8.5 4.3 8.5-4.3M3.5 16l8.5 4.3 8.5-4.3"/>
+    </symbol>
+    <symbol id="i-xray" viewBox="0 0 24 24">
+      <path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6Z"/>
+      <circle cx="12" cy="12" r="2.5"/><path d="M12 2.5v3M12 18.5v3"/>
+    </symbol>
+    <symbol id="i-heat" viewBox="0 0 24 24">
+      <path d="M10 14.4V5.5a2 2 0 1 1 4 0v8.9a4.2 4.2 0 1 1-4 0Z"/><path d="M12 17.5v-5"/>
+    </symbol>
+    <symbol id="i-drag" viewBox="0 0 24 24">
+      <path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>
+    </symbol>
+    <symbol id="i-spec" viewBox="0 0 24 24">
+      <path d="M6 3.5h9l4 4v13H6z"/><path d="M14.5 3.5v4.7H19M9 12h6M9 15.5h6M9 8.5h2"/>
+    </symbol>
+  </svg>
+
+  <canvas id="ambient" aria-hidden="true"></canvas>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-aurora" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <div class="app" id="app">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="DGX Spark 交互式档案首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M20 2.5 37.5 20 20 37.5 2.5 20Z" stroke="currentColor" stroke-width="1.1" opacity=".65"/>
+            <path d="M20 8 32 20 20 32 8 20Z" stroke="currentColor" stroke-width="1" opacity=".35"/>
+            <path d="M20 13.5 26.5 20 20 26.5 13.5 20Z" fill="currentColor"/>
+            <circle cx="20" cy="20" r="2.1" fill="#07100a"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-name">DGX <b>SPARK</b></span>
+          <span class="brand-sub">INTERACTIVE HARDWARE DOSSIER</span>
+        </span>
+      </a>
+
+      <div class="top-status" aria-label="项目状态">
+        <span class="status-live"><i></i>LIVE TEARDOWN</span>
+        <span class="status-sep"></span>
+        <span class="status-code">P4242 / GB10</span>
+        <span class="status-sep"></span>
+        <span class="status-code status-code--dim">REV. 1.0</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" type="button" id="fullscreenBtn" aria-label="切换全屏" title="全屏 (F)">
+          <svg><use href="#i-expand"/></svg>
+        </button>
+        <button class="btn btn--ghost js-open-spec" type="button">
+          <svg><use href="#i-spec"/></svg><span class="btn-label">完整规格</span>
+        </button>
+        <button class="btn btn--solid" type="button" id="resetBtn">
+          <svg><use href="#i-reset"/></svg><span class="btn-label">重置视角</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout" id="top">
+      <aside class="panel panel--left" aria-labelledby="componentsTitle">
+        <div class="panel-head">
+          <div class="panel-head__top">
+            <span class="panel-kicker">SYSTEM INDEX</span>
+            <span class="panel-count">08 <i>MODULES</i></span>
+          </div>
+          <h2 class="panel-title" id="componentsTitle">系统清单<span>COMPONENT INDEX</span></h2>
+        </div>
+        <ol class="component-list" id="componentList"></ol>
+        <div class="arch-card" aria-label="GB10 架构速览">
+          <div class="arch-card__head">
+            <span>ON-CHIP / GB10</span>
+            <span>2.5D PACKAGE</span>
+          </div>
+          <div class="arch-card__grid">
+            <div><strong>20</strong><small>ARM CORES</small></div>
+            <div><strong>6,144</strong><small>CUDA CORES</small></div>
+            <div><strong>128</strong><small>GB UNIFIED</small></div>
+          </div>
+          <div class="arch-card__bus"><i></i><span>NVLink-C2C</span><i></i></div>
+        </div>
+        <div class="panel-foot">
+          <span class="foot-pulse"><i></i>点击模块聚焦</span>
+          <span class="foot-mono">01—08</span>
+        </div>
+      </aside>
+
+      <section class="stage" id="stage" data-mode="exterior" aria-labelledby="productTitle">
+        <i class="frame-corner frame-corner--tl" aria-hidden="true"></i>
+        <i class="frame-corner frame-corner--tr" aria-hidden="true"></i>
+        <i class="frame-corner frame-corner--bl" aria-hidden="true"></i>
+        <i class="frame-corner frame-corner--br" aria-hidden="true"></i>
+
+        <div class="stage-head">
+          <div class="stage-eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">DESKTOP AI SUPERCOMPUTER</span>
+            <span class="eyebrow-line"></span>
+          </div>
+          <h1 class="product-title" id="productTitle" aria-label="DGX Spark">
+            <span class="title-dgx">DGX</span><span class="title-spark">SPARK</span><sup>™</sup>
+          </h1>
+          <p class="product-sub">
+            <span class="product-sub__en">PERSONAL AI SUPERCOMPUTER</span>
+            <span class="product-sub__divider"></span>
+            <span class="product-sub__zh">把数据中心级 AI，放上桌面</span>
+          </p>
+          <ul class="stage-tags" aria-label="核心亮点">
+            <li><i style="--dot:#b6f24a"></i>1 PFLOPS <span>FP4</span></li>
+            <li><i style="--dot:#e4cf9e"></i>128 GB <span>UNIFIED</span></li>
+            <li><i style="--dot:#6ee7cf"></i>GB10 <span>SUPERCHIP</span></li>
+          </ul>
+        </div>
+
+        <div class="viewport" id="viewport" aria-label="可拖拽旋转的 DGX Spark 3D 模型">
+          <div class="stage-bg-mark" aria-hidden="true">SPARK<span>GB10</span></div>
+
+          <div class="floor-grid" aria-hidden="true"></div>
+          <div class="scene-aura" aria-hidden="true"></div>
+          <div class="halo halo--outer" aria-hidden="true"></div>
+          <div class="halo halo--inner" aria-hidden="true"></div>
+          <div class="orbit-dot orbit-dot--a" aria-hidden="true"></div>
+          <div class="orbit-dot orbit-dot--b" aria-hidden="true"></div>
+          <div class="device-shadow" aria-hidden="true"></div>
+          <div class="device-bounce" aria-hidden="true"></div>
+
+          <canvas class="spark-canvas" id="sparkCanvas" aria-hidden="true"></canvas>
+          <div class="scene-loader" id="sceneLoader" role="status" aria-live="polite">
+            <span class="scene-loader__orb" aria-hidden="true"><i></i></span>
+            <span class="scene-loader__label">INITIALIZING GB10 / P4242</span>
+            <span class="scene-loader__bar"><i></i></span>
+          </div>
+          <div class="scene-fallback" id="sceneFallback" hidden>
+            <strong>无法初始化 WebGL</strong>
+            <span>请使用支持 WebGL 2 的浏览器重新打开此页面。</span>
+          </div>
+          <div class="thermal-tags" id="thermalTags" aria-hidden="true">
+            <span data-tag="gb10"><i></i>GB10 <b>64°C</b></span>
+            <span data-tag="memory"><i></i>LPDDR5X <b>52°C</b></span>
+            <span data-tag="storage"><i></i>NVMe <b>46°C</b></span>
+          </div>
+          <div class="hotspots" id="hotspots" aria-label="可交互热点"></div>
+
+          <div class="scene-meta scene-meta--left">
+            <span class="scene-meta__line"></span>
+            <span>OBJ / P4242</span>
+            <b>DGX SPARK</b>
+          </div>
+          <div class="scene-meta scene-meta--right" aria-hidden="true">
+            <span>ORBIT</span>
+            <b id="rotationReadout">YAW −009.0° · PITCH +01.5°</b>
+            <span>ZOOM ×<i id="zoomReadout">1.00</i></span>
+          </div>
+
+          <div class="mode-note" id="modeNote" aria-live="polite">
+            <i></i><span>EXTERIOR / 完整机身</span><p>拖拽环绕，点击左侧模块或机身热点探索内部结构。</p>
+          </div>
+
+          <div class="thermal-legend" id="thermalLegend" aria-hidden="true">
+            <div class="thermal-legend__head"><span>THERMAL SIM</span><span>非实时数据</span></div>
+            <div class="thermal-scale"></div>
+            <div class="thermal-labels"><span>35°C</span><span>55°C</span><span>75°C</span></div>
+          </div>
+
+          <article class="component-card" id="componentCard" hidden aria-live="polite">
+            <button class="card-close" id="cardClose" type="button" aria-label="关闭组件详情">
+              <svg><use href="#i-close"/></svg>
+            </button>
+            <div class="card-topline">
+              <span id="cardIndex">01 / 08</span>
+              <span class="card-tag" id="cardTag">CORE SILICON</span>
+            </div>
+            <p class="card-en" id="cardEn">GB10 SUPERCHIP</p>
+            <h3 class="card-title" id="cardTitle">GB10 超级芯片</h3>
+            <p class="card-desc" id="cardDesc"></p>
+            <dl class="card-specs" id="cardSpecs"></dl>
+            <button class="card-action" id="cardAction" type="button">
+              <span>X-RAY 透视内部</span>
+              <svg><use href="#i-arrow"/></svg>
+            </button>
+          </article>
+
+          <div class="scene-hint" id="sceneHint">
+            <span class="hint-item"><svg><use href="#i-drag"/></svg>拖拽环绕</span>
+            <span class="hint-divider"></span>
+            <span class="hint-item"><kbd>SCROLL</kbd>缩放</span>
+            <span class="hint-divider"></span>
+            <span class="hint-item"><kbd>DBL CLICK</kbd>复位</span>
+          </div>
+
+          <div class="scene-ruler scene-ruler--x" aria-hidden="true">
+            <span><i></i>150 MM<i></i></span>
+          </div>
+          <div class="scene-ruler scene-ruler--y" aria-hidden="true">
+            <span><i></i>50.5 MM<i></i></span>
+          </div>
+        </div>
+
+        <div class="stage-controls">
+          <div class="mode-switch" role="group" aria-label="展示模式">
+            <button class="mode-btn is-active" type="button" aria-pressed="true" data-mode="exterior">
+              <span class="mode-btn__num">01</span>
+              <span class="mode-btn__copy"><b>外观</b><small>EXTERIOR</small></span>
+            </button>
+            <button class="mode-btn" type="button" aria-pressed="false" data-mode="cutaway">
+              <span class="mode-btn__num">02</span>
+              <span class="mode-btn__copy"><b>结构</b><small>CUTAWAY</small></span>
+            </button>
+            <button class="mode-btn" type="button" aria-pressed="false" data-mode="xray">
+              <span class="mode-btn__num">03</span>
+              <span class="mode-btn__copy"><b>透视</b><small>X-RAY</small></span>
+            </button>
+            <button class="mode-btn" type="button" aria-pressed="false" data-mode="thermal">
+              <span class="mode-btn__num">04</span>
+              <span class="mode-btn__copy"><b>热力</b><small>THERMAL</small></span>
+            </button>
+          </div>
+
+          <div class="stage-controls__right">
+            <button class="auto-toggle" type="button" id="autoRotateBtn" aria-pressed="true" title="切换自动旋转 (A)">
+              <span class="auto-ring"><i></i></span>
+              <span class="auto-label">自动旋转</span>
+            </button>
+            <span class="control-divider"></span>
+            <button class="icon-btn icon-btn--control" type="button" id="resetViewBtn" aria-label="重置视角" title="重置 (R)">
+              <svg><use href="#i-reset"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel panel--right" aria-labelledby="dossierTitle">
+        <div class="panel-head">
+          <div class="panel-head__top">
+            <span class="panel-kicker">TECHNICAL DOSSIER</span>
+            <span class="panel-live"><i></i>LIVE DATA</span>
+          </div>
+          <h2 class="panel-title" id="dossierTitle">技术档案<span>SYSTEM SPECIFICATION</span></h2>
+        </div>
+
+        <div class="dossier-scroll">
+          <div class="dossier-head">
+            <div class="dossier-index">00 <span>/ 08</span></div>
+            <div>
+              <span class="dossier-model">GB10 GRACE BLACKWELL · P4242</span>
+              <h3>DGX SPARK</h3>
+              <span class="dossier-ver">PERSONAL AI SUPERCOMPUTER</span>
+            </div>
+          </div>
+          <p class="dossier-desc">
+            一台能放在背包里的 AI 超算。Grace Blackwell 架构、128 GB 统一内存与 1 PFLOPS FP4 算力，让 200B 参数级模型在桌面上完成推理、部署与原型开发。
+          </p>
+
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="metric-label">AI 算力 <small>FP4</small></span>
+              <strong>1<span>PFLOPS</span></strong>
+              <div class="metric-bar"><i style="--fill:100%"></i></div>
+            </div>
+            <div class="metric">
+              <span class="metric-label">统一内存</span>
+              <strong>128<span>GB</span></strong>
+              <div class="metric-bar"><i style="--fill:78%"></i></div>
+            </div>
+            <div class="metric">
+              <span class="metric-label">带宽</span>
+              <strong>273<span>GB/S</span></strong>
+              <div class="metric-bar"><i style="--fill:62%"></i></div>
+            </div>
+            <div class="metric">
+              <span class="metric-label">功耗</span>
+              <strong>240<span>W</span></strong>
+              <div class="metric-bar"><i style="--fill:44%"></i></div>
+            </div>
+          </div>
+
+          <div class="dossier-subhead">
+            <span>核心配置</span>
+            <span>SYSTEM SPEC</span>
+          </div>
+
+          <dl class="spec-list">
+            <div class="spec-row" data-focus="compute">
+              <dt><span class="spec-glyph">GPU</span><span>图形核心</span></dt>
+              <dd>Blackwell <b>6,144 CUDA</b></dd>
+            </div>
+            <div class="spec-row" data-focus="cpu">
+              <dt><span class="spec-glyph">CPU</span><span>处理器</span></dt>
+              <dd>20-core Arm <b>10X + 10A</b></dd>
+            </div>
+            <div class="spec-row" data-focus="memory">
+              <dt><span class="spec-glyph">RAM</span><span>统一内存</span></dt>
+              <dd>LPDDR5X <b>128 GB</b></dd>
+            </div>
+            <div class="spec-row" data-focus="network">
+              <dt><span class="spec-glyph">NET</span><span>互联</span></dt>
+              <dd>ConnectX-7 <b>200 Gb/s</b></dd>
+            </div>
+            <div class="spec-row" data-focus="storage">
+              <dt><span class="spec-glyph">SSD</span><span>存储</span></dt>
+              <dd>NVMe M.2 <b>4 TB</b></dd>
+            </div>
+            <div class="spec-row" data-focus="io">
+              <dt><span class="spec-glyph">I/O</span><span>接口</span></dt>
+              <dd>USB-C / HDMI <b>10 GbE</b></dd>
+            </div>
+            <div class="spec-row" data-focus="wireless">
+              <dt><span class="spec-glyph">RF</span><span>无线</span></dt>
+              <dd>Wi-Fi 7 <b>BT 5.4</b></dd>
+            </div>
+            <div class="spec-row" data-focus="physical">
+              <dt><span class="spec-glyph">DIM</span><span>机身</span></dt>
+              <dd>150×150×50.5 <b>1.2 kg</b></dd>
+            </div>
+          </dl>
+
+          <div class="cluster-card">
+            <div class="cluster-card__top">
+              <span class="cluster-kicker">SCALE OUT</span>
+              <span class="cluster-num">02 → 405B</span>
+            </div>
+            <p>双机 ConnectX-7 直连，解锁 <b>405B</b> 参数级模型的本地推理空间。</p>
+            <div class="cluster-nodes" aria-hidden="true">
+              <i></i><span></span><i></i><em>200 Gb/s</em>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="panel-foot panel-foot--cta">
+          <span class="foot-pulse"><i></i>资料同步完成</span>
+          <button class="foot-link js-open-spec" type="button">
+            完整规格<svg><use href="#i-arrow"/></svg>
+          </button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="statusbar">
+      <div class="statusbar__left">
+        <span class="sys-dot"></span>
+        <span>SYSTEM NOMINAL</span>
+        <span class="statusbar__sep"></span>
+        <span class="hide-sm">GB10 · 128 GB UNIFIED · SINGLE NODE</span>
+      </div>
+      <div class="statusbar__center">CONCEPT INTERFACE <span>·</span> NOT AFFILIATED WITH NVIDIA</div>
+      <div class="statusbar__right">
+        <span class="hide-sm">LOCAL</span>
+        <time id="clock" datetime="">--:--:--</time>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="spec-dialog" id="specDialog" aria-labelledby="specDialogTitle">
+    <div class="spec-dialog__inner">
+      <div class="spec-dialog__head">
+        <div>
+          <span class="panel-kicker">TECHNICAL DOSSIER / FULL SPECIFICATION</span>
+          <h2 id="specDialogTitle">DGX SPARK <span>完整规格</span></h2>
+        </div>
+        <button class="spec-dialog__close" id="specClose" type="button" aria-label="关闭完整规格">
+          <svg><use href="#i-close"/></svg>
+        </button>
+      </div>
+
+      <div class="spec-dialog__intro">
+        <p>NVIDIA GB10 Grace Blackwell 超级芯片 · 桌面级个人 AI 超算</p>
+        <div class="spec-dialog__badges">
+          <span>1 PFLOPS FP4</span><span>128 GB UNIFIED</span><span>240 W</span><span>1.2 KG</span>
+        </div>
+      </div>
+
+      <div class="spec-dialog__grid">
+        <section class="spec-block">
+          <h3><span>01</span>核心计算</h3>
+          <dl>
+            <div><dt>超级芯片</dt><dd>NVIDIA GB10 Grace Blackwell</dd></div>
+            <div><dt>CPU</dt><dd>20 核 Arm（10× Cortex-X925 + 10× Cortex-A725）</dd></div>
+            <div><dt>GPU</dt><dd>Blackwell 架构 · 6,144 CUDA 核心</dd></div>
+            <div><dt>Tensor Core</dt><dd>第五代 · 支持 FP4</dd></div>
+            <div><dt>AI 算力</dt><dd>最高 1 PFLOP FP4（稀疏）· 1,000 TOPS 推理</dd></div>
+          </dl>
+        </section>
+
+        <section class="spec-block">
+          <h3><span>02</span>内存与存储</h3>
+          <dl>
+            <div><dt>统一内存</dt><dd>128 GB LPDDR5X</dd></div>
+            <div><dt>内存接口</dt><dd>256-bit · 16 通道 · 273 GB/s</dd></div>
+            <div><dt>存储</dt><dd>4 TB NVMe M.2（自加密）</dd></div>
+            <div><dt>模型规模</dt><dd>单机 200B 参数级 · 双机 405B 参数级</dd></div>
+            <div><dt>视频引擎</dt><dd>1× NVENC · 1× NVDEC</dd></div>
+          </dl>
+        </section>
+
+        <section class="spec-block">
+          <h3><span>03</span>网络与接口</h3>
+          <dl>
+            <div><dt>智能网卡</dt><dd>NVIDIA ConnectX-7</dd></div>
+            <div><dt>高速互联</dt><dd>2× QSFP · 最高 200 Gb/s</dd></div>
+            <div><dt>有线网络</dt><dd>1× RJ-45 10 GbE</dd></div>
+            <div><dt>USB</dt><dd>4× USB Type-C（其中一个用于供电）</dd></div>
+            <div><dt>显示</dt><dd>1× HDMI 2.1a · 多声道音频</dd></div>
+            <div><dt>无线</dt><dd>Wi-Fi 7 · Bluetooth 5.4</dd></div>
+          </dl>
+        </section>
+
+        <section class="spec-block">
+          <h3><span>04</span>物理与供电</h3>
+          <dl>
+            <div><dt>尺寸</dt><dd>150 × 150 × 50.5 mm</dd></div>
+            <div><dt>重量</dt><dd>1.2 kg</dd></div>
+            <div><dt>电源</dt><dd>240 W 外置电源适配器（USB-C）</dd></div>
+            <div><dt>SoC TDP</dt><dd>140 W · 其余约 100 W 供系统组件</dd></div>
+            <div><dt>建议环境</dt><dd>5–30°C · 10–90% 非凝结湿度</dd></div>
+          </dl>
+        </section>
+
+        <section class="spec-block spec-block--wide">
+          <h3><span>05</span>软件与生态</h3>
+          <dl>
+            <div><dt>操作系统</dt><dd>NVIDIA DGX OS（Ubuntu 基础）</dd></div>
+            <div><dt>框架</dt><dd>PyTorch · TensorRT-LLM 及主流 AI 框架</dd></div>
+            <div><dt>工具链</dt><dd>CUDA · NGC · NIM · JupyterLab · 容器运行时</dd></div>
+          </dl>
+        </section>
+      </div>
+
+      <div class="spec-dialog__foot">
+        <p>数据来源：NVIDIA DGX Spark User Guide（公开规格）。3D 模型：Wendy Labs（wendy.dev）。本页面为前端交互概念演示，非 NVIDIA 官方页面。</p>
+        <a href="https://docs.nvidia.com/dgx/dgx-spark/hardware.html" target="_blank" rel="noreferrer noopener">查看官方硬件文档 <svg><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript>
+    <div class="noscript">此交互页面需要启用 JavaScript 才能旋转 DGX Spark 并浏览组件详情。</div>
+  </noscript>
+
+  <script src="vendor/spark3d-libs.js"></script>
+  <script src="assets/dgx-spark-model.js"></script>
+  <script src="viewer.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
